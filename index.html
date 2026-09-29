@@ -38,6 +38,18 @@
     const statusText = document.getElementById("status");
     const welcome = document.getElementById("welcome");
     let loading = false;
+    let readinessTimeout;
+    function showGame() {
+      clearTimeout(readinessTimeout);
+      welcome.hidden = true;
+    }
+    function showRecovery(message) {
+      clearTimeout(readinessTimeout);
+      statusText.textContent = message;
+      startButton.disabled = false;
+      startButton.textContent = "REINTENTAR";
+      startButton.onclick = function () { window.location.reload(); };
+    }
 
     startButton.addEventListener("click", function () {
       if (loading) return;
@@ -57,23 +69,19 @@
       window.EJS_GamepadOpacity = "0.7";
       window.EJS_scaleControls = true;
       window.EJS_forceLocalSave = true;
+      window.EJS_ready = showGame;
       window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
       window.EJS_gameUrl = "Pokemon - Edicion Verde Hoja (Spain).zip";
       window.EJS_biosUrl = "gba_bios.zip";
 
       const loader = document.createElement("script");
       loader.src = window.EJS_pathtodata + "loader.js";
-      loader.onload = function () {
-        welcome.hidden = true;
-        // EmulatorJS presents its own start control. This is intentional:
-        // mobile browsers may require a fresh tap to unlock audio.
-      };
       loader.onerror = function () {
-        loading = false;
-        startButton.disabled = false;
-        startButton.textContent = "REINTENTAR";
-        statusText.textContent = "No se pudo cargar el emulador. Comprueba tu conexión e inténtalo otra vez.";
+        showRecovery("No se pudo descargar el emulador. Comprueba tu conexión y reintenta.");
       };
+      readinessTimeout = setTimeout(function () {
+        if (!welcome.hidden) showRecovery("La carga está tardando demasiado. Pulsa REINTENTAR para recargar la página.");
+      }, 30000);
       document.body.appendChild(loader);
     });
   </script>
