@@ -1,32 +1,81 @@
-<html>
-    <head>
-        <!--HTML file auto generated using EmulatorJS codehelper-->
-        <style>
-            body, html {
-                margin: 0;
-                padding: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <div style="width:100%;height:100%;max-width:100%">
-            <div id="game"></div>
-        </div>
-        <script>
-            EJS_player = "#game";
-            EJS_core = "gba";
-            EJS_gameName = "Pokemon Verde Hoja";
-            EJS_color = "#0064ff";
-            EJS_startOnLoaded = true;
-            EJS_AdPhant_MobileGamepad = true;
-            EJS_mouse = false;
-            EJS_GamepadOpacity = "0.7"
-            EJS_scaleControls = true;
-            EJS_forceLocalSave = true;
-            EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-            EJS_gameUrl = "Pokemon - Edicion Verde Hoja (Spain).zip";
-            EJS_biosUrl = "gba_bios.zip";
-        </script>
-        <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
-    </body>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17132b">
+  <title>Gauri.3D | Pokémon Verde Hoja</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; min-height: 100%; background: #17132b; font-family: system-ui, -apple-system, sans-serif; }
+    #game { width: 100%; height: 100dvh; min-height: 100vh; }
+    .welcome { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 25%, #55407d, #17132b 75%); color: #fff; text-align: center; }
+    .welcome[hidden] { display: none; }
+    .panel { width: min(100%, 420px); padding: 36px 24px; border: 1px solid #ffffff35; border-radius: 26px; background: #ffffff12; box-shadow: 0 20px 65px #0005; }
+    .mark { display: inline-grid; place-items: center; width: 76px; height: 76px; margin-bottom: 14px; border: 2px solid #e5c6ff; border-radius: 22px; font-size: 38px; }
+    h1 { margin: 0; font-size: clamp(30px, 8vw, 42px); letter-spacing: -.05em; }
+    .subtitle { margin: 8px 0 28px; color: #e6d8f6; }
+    button { width: 100%; padding: 16px; border: 0; border-radius: 14px; background: #e6c4ff; color: #211432; font-size: 17px; font-weight: 800; cursor: pointer; }
+    button:disabled { opacity: .7; cursor: wait; }
+    .status { min-height: 24px; margin: 16px 0 0; font-size: 13px; color: #e6d8f6; }
+    .foot { margin: 22px 0 0; font-size: 12px; color: #d6c1e9; }
+  </style>
+</head>
+<body>
+  <main id="game" aria-label="Emulador de Game Boy Advance"></main>
+  <section class="welcome" id="welcome" aria-labelledby="welcome-title">
+    <div class="panel">
+      <div class="mark" aria-hidden="true">✦</div>
+      <h1 id="welcome-title">GAURI.3D</h1>
+      <p class="subtitle">Tu aventura comienza aquí.<br>Pokémon Verde Hoja</p>
+      <button type="button" id="start">INICIAR JUEGO</button>
+      <p class="status" id="status" role="status" aria-live="polite">Toca para preparar tu aventura.</p>
+      <p class="foot">Cartucho NFC · Edición retro</p>
+    </div>
+  </section>
+  <script>
+    const startButton = document.getElementById("start");
+    const statusText = document.getElementById("status");
+    const welcome = document.getElementById("welcome");
+    let loading = false;
+
+    startButton.addEventListener("click", function () {
+      if (loading) return;
+      loading = true;
+      startButton.disabled = true;
+      startButton.textContent = "PREPARANDO JUEGO…";
+      statusText.textContent = "Cargando EmulatorJS. Espera un momento…";
+
+      // Initialize EmulatorJS only after the user has tapped the page.
+      window.EJS_player = "#game";
+      window.EJS_core = "gba";
+      window.EJS_gameName = "Pokemon Verde Hoja";
+      window.EJS_color = "#0064ff";
+      window.EJS_startOnLoaded = false;
+      window.EJS_AdPhant_MobileGamepad = true;
+      window.EJS_mouse = false;
+      window.EJS_GamepadOpacity = "0.7";
+      window.EJS_scaleControls = true;
+      window.EJS_forceLocalSave = true;
+      window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+      window.EJS_gameUrl = "Pokemon - Edicion Verde Hoja (Spain).zip";
+      window.EJS_biosUrl = "gba_bios.zip";
+
+      const loader = document.createElement("script");
+      loader.src = window.EJS_pathtodata + "loader.js";
+      loader.onload = function () {
+        welcome.hidden = true;
+        // EmulatorJS presents its own start control. This is intentional:
+        // mobile browsers may require a fresh tap to unlock audio.
+      };
+      loader.onerror = function () {
+        loading = false;
+        startButton.disabled = false;
+        startButton.textContent = "REINTENTAR";
+        statusText.textContent = "No se pudo cargar el emulador. Comprueba tu conexión e inténtalo otra vez.";
+      };
+      document.body.appendChild(loader);
+    });
+  </script>
+</body>
 </html>
